@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Tableau Dinamis</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { display: flex; height: 100vh; }
+    .sidebar {
+      width: 220px;
+      background-color: #f0f0f0;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+    }
+    .sidebar h2 { margin-bottom: 20px; font-size: 18px; }
+    .sidebar a {
+      display: block;
+      margin-bottom: 10px;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .sidebar a:hover { color: #007bff; }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+    }
+    #vizContainer {
+      width: 100%;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>NiceAdmin</h2>
+
+    <h2>M Fahrur Risqan</h2>
+
+    <a onclick="loadViz('BarChart')">Bar Chart</a>
+    <a onclick="loadViz('LineChart')">Line Chart</a>
+    <a onclick="loadViz('PieChart')">Pie Chart</a>
+    <a onclick="loadViz('MapChart')">Map Chart</a>
+    <a onclick="loadViz('ScatterPlot')">Scatter Plot</a>
+    <a onclick="loadViz('BubbleChart')">Bubble Chart</a>
+    <a onclick="loadViz('TreeMap')">Tree Map</a>
+    <a onclick="loadViz('GanttChart')">Gantt Chart</a>
+    <a onclick="loadViz('LollipopChart')">Lollipop Chart</a>
+    <a onclick="loadViz('WordCloud')">Word Cloud</a>
+    <a onclick="loadViz('BoxPlot')">Box Plot</a>
+    <a onclick="loadViz('Histogram')">Histogram Chart</a>
+    <a onclick="loadViz('SampleSuperstore')">Sample Superstore</a>
+    <!-- Tambahkan lainnya sesuai kebutuhan -->
+  </div>
+
+  <div class="main-content">
+    <h1 id="chartTitle">Pilih Chart</h1>
+    <div id="vizContainer"></div>
+  </div>
+
+  <script src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+  <script>
+    let viz;
+
+      const chartLinks = {
+  BarChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  LineChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Line_Chart/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  PieChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Pie_Chart/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  MapChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Map_Chart/Sheet1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  ScatterPlot: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Scatter_Plot/Sheet1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  BubbleChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Bubble_Chart/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  TreeMap: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Tree_Map/Sheet1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  GanttChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208Project10_Gantt_Chart/Sheet1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  LollipopChart: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Project10_Lolipop_Chart/Sheet1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  WordCloud: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Word_Cloud/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  BoxPlot: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata2431208_Box_Pilot/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  Histogram: 'https://public.tableau.com/views/M_Fahrur_Risqan_Hadinata_Histogram_Chart/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  SampleSuperstore:'https://public.tableau.com/views/Risqan_Dashboard/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link'
+};
+
+    function loadViz(chartName) {
+      const container = document.getElementById("vizContainer");
+      const url = chartLinks[chartName];
+      const title = document.getElementById("chartTitle");
+
+      // Set judul chart
+      title.innerText = chartName.replace(/([A-Z])/g, ' $1').trim();
+
+      // Hapus visualisasi sebelumnya jika ada
+      if (viz) {
+        viz.dispose();
+      }
+
+      // Tampilkan chart baru
+      const options = {
+        width: "100%",
+        height: "600px",
+        hideToolbar: false,
+        hideTabs: true
+      };
+      viz = new tableau.Viz(container, url, options);
+    }
+  </script>
+
+</body>
+</html>
